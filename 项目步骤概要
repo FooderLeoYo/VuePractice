@@ -1,0 +1,127 @@
+1. 用脚手架创建项目：vue create 项目名
+
+2 删掉一些预设的垃圾
+
+3. 划分目录结构
+	3.1 assets
+		3.1.1 css
+			3.1.1.1 normalize.css
+			3.1.1.2 base.css
+		3.1.2 img
+	3.2 components
+		3.2.1 common
+		3.2.2 content
+		3.3 network
+		3.4 common
+
+4. css
+	1. base.css中导入normalize.css
+	2. APP.vue中style中@import base.css
+
+5. 配置别名：和package.json同级放vue.config.js
+	注意：在使用别名的时候，<template>和<style>中的静态文件地址需要加~；在script里的, 别名定义成什么就写什么
+
+6. 统一全局格式：和package.json同级放.editorconfig
+
+7. 配置路由
+
+8. 将better-scroll插件封装成Scroll组件
+	1. 安装：cnpm i better-scroll -S
+	2. components/common下建scroll文件夹，里面建Scroll.vue
+	3. Scroll.vue的template中放一个class为wrapper的div，wrapper里再放一个div，div里放一个slot
+	4. Scroll.vue中导入BScroll（不需要注册组件）
+	5. 创建变量储存BScroll实例：Scroll.vue中添加data，里面添加scroll: null
+	6. 创建BScroll实例：Scroll.vue中添加mounted()，new一个BScroll赋给scroll，设置click为true
+	7. 由调用者决定是否需要是否需要监听上拉加载
+		1. 让外界传递参数决定是否监听：Scroll.vue中的props添加pullUpLoad
+		2. 初始化组件时应用监听类型：mounted的new BScroll中添加pullUpLoad: this.pullUpLoad
+		3. 监听拉到底部：Scroll.vue中的mounted给scroll绑定一个pullingUp，并发射出去
+
+9. 封装BackTop组件
+	1. components/content下建backTop文件夹，里面建BackTop.vue
+	2. 插入图片，并调整样式
+
+10. 封装navBar：components/common下放navBar组件
+
+11. 导入底部tabBar
+	1. components/common下放tabBar组件
+	2. components/content下放mainTabBar组件
+	3. App.vue导入mainTabBar
+
+12. 封装网络请求
+	1. 安装axios
+	2. network文件夹下放request.js
+
+13. 封装tabControl：components/content下放tabControl组件
+
+14. 首页
+	1. Home.vue导入navBar，使用其center插槽做一个顶部导航栏
+	2. 使用better-scroll
+		1. 导入Scroll，并给<scroll>添加class="content"
+		2. 将需要滚动的内容包裹在<scroll>标签中
+		3. 调整content的css样式以给content一个高度
+	3. 请求轮播图和推荐信息的数据
+		1. 创建首页的网络请求：network文件夹下放home.js，并在Home.vue中导入
+		2. Home.vue中data属性内添加：banners、recommends属性用以储存请求过来的数据
+		3. Home.vue中的methods添加getHomeMultidata方法
+		4. Home.vue中的created中添加相关方法，初始化时调用网络请求，拿到轮播图和推荐信息的数据
+	4. 轮播图
+		1. components/common下放swiper组件
+		2. views/home下新建childComps文件夹，放HomeSwiper.vue，并在Home中导入它
+	5. 推荐信息：views/home/childComps下放RecommendView.vue，并在Home中导入它
+	6. 本周流行：views/home/childComps下放FeatureView.vue，并在Home中导入它
+	7. tabcontrol
+		1. Home.vue中导入TabControl组件
+		2. 传titles给TabControl组件
+	8. 商品展示
+		1. network下home.js添加getHomeGoods方法
+		2. Home.vue中的methods添加getHomeGoods方法
+		3. Home.vue中的data添加goods和currentType属性，用来存储拿到的商品数据和记录当前显示的商品类型
+		4. Home.vue中的created添加3个调用getHomeGoods，拿到3类商品的数据
+		5. components/content下放goodsList组件
+		6. Home.vue中导入GoodsList
+		7. Home.vue中的computed添加showGoods调取data中拿到的数据
+		8. <GoodsList>中通过绑定showGoods将数据传给GoodsList做展示
+	9. 点击tabControl切换到对应类型的商品
+		1. 点击TabControl时拿到点击的是几个：TabControl.vue中的tabClick添加this.$emit("tabClick", index);
+		2. Home.vue中的<TabControl>拿到tabClick，并将其绑定给tabClick方法
+		3. Home.vue的methods中添加tabClick方法，将currentType设置为当前所点击的类型
+	10. 使用BackTop组件
+		1. Home.vue中导入BackTop组件
+		2. <BackTop>添加点击事件，并绑定backClick方法
+		3. 给<Scroll>添加ref="scroll"，方便backClick方法拿到Scroll组件
+		4. methods添加backClick方法，设置“回到顶部”按钮所返回的位置以及动画时间
+		4. 显示和消失效果
+			1. 由调用者决定监听方式类型：Scroll.vue中添加props，里面添加probeType
+			2. Scroll.vue中的new BScroll里面添加probeType: this.probeType
+			3. Home.vue的<Scroll>绑定监听方式类型：:probeType="3"
+			4. Scroll.vue中的mounted添加scroll.on，获取到当前滚动的位置，并向外暴露scroll事件和position
+			5. Home.vue的<Scroll>通过@拿到scroll事件和position，并给其绑定contentScroll方法
+			6. Home.vue的<backTop>添加：v-show="ifShowBackTop"
+			7. Home.vue的data里添加ifShowBackTop: false
+			6. Home.vue的methods添加contentScroll方法，利用拿到的position并通过操作ifShowBackTop控制是否显示“回到顶部”
+	11. 上拉加载更多
+		1. 首页告知Scroll需要监听上拉加载：Home.vue的<scroll>绑定:pullUpLoad="true"
+		2. 当拉到底部继续上拉，Scroll会向外发射pullingUp，Home.vue的<scroll>拿到pullingUp，并为其绑定loadMore方法
+		3. Home.vue的methods中添加loadMore方法，通过调用getHomeGoods加载更多商品数据
+		4. BScroll默认只能上拉加载一次，因此每次加载完要告知已加载
+			1. Home.vue的getHomeGoods中添加this.$refs.scroll.finishPullUp();
+			2. Scroll.vue的methods中添加finishPullUp方法
+	12. 解决BScroll有时无法拉动的BUG
+		BUG原因：
+			1. BScroll内部有一个参数决定可滚动区域的高度，这个参数的值在BScroll被创建时就定下来了
+			2. 但当有时图片加载太慢，就会出现图片还未加载完这个参数的值就先定下来了
+			3. 这样一来就没把那些图片的高度算进去，造成可滚动区域高度小于实际的内容高度
+			4. 解决的思路就是在1个page（本项目商品的数据刷新一次拿到1个page，30张图）中30张图片加载完后执行一次刷新页面
+		代码添加步骤：
+			1. GoodsListItem.vue的<img>添加：@load="imageLoad"，在图片加载完的时机调用imageLoad方法
+			2. GoodsListItem.vue的methods添加imageLoad方法，对外发射告知已加载完图片
+			3. 由于imageLoad的数据传递用到数据总线，因此main.js中new另外一个Vue实例作为事件总线
+			4. 图片加载完后执行刷新，并防抖
+				1. Home.vue的methods添加debounce方法
+				2. Home.vue的mounted中，将调用刷新放进防抖函数中，并赋值给自定义变量refresh
+				3. Home.vue的mounted添加$bus.$on，每当有图片加载完成便执行refresh()
+			5. Scroll.vue中的methods添加refresh方法
+
+
+	
