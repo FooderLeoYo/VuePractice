@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <!--@load获取到图片加载完成的时机后，调用imageLoad  -->
     <img :src="goodsItem.show.img" @load="imageLoad" />
     <div class="goods-info">
@@ -30,6 +30,11 @@ export default {
       // 3. 这个组件同时被Home和Detail使用，而当Home或Detail其中一方的图片加载完时不应该通知另外一方
       // 故加if判断，实现只通知自己
       this.$bus.$emit("homeItemImgLoad");
+    },
+
+    // 点击GoodsListItem后跳转到详情页
+    itemClick() {
+      this.$router.push("/detail/" + this.goodsItem.iid); // 用动态路由的方式拿到详情页id
     }
   }
 };

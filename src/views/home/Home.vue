@@ -5,6 +5,16 @@
         <div>购物街</div>
       </template>
     </NavBar>
+    <!-- 在scroll外面又放一个tab-control是因为scroll里面那个tab-control会随着上拉一起往上跑，无法吸顶 -->
+    <!-- 原因是BScroll是通过transform: translate来实现滚动，而即使设置了fixed的元素transform后依然会动 -->
+    <!-- 外面的这个tab-control一开始是隐藏的，屏幕上拉到scroll里面那个tab-control的位置时正好显示出来 -->
+    <TabControl
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControlOut"
+      class="tab-control"
+      v-show="isTabFixed"
+    />
     <Scroll
       class="content"
       ref="scroll"
@@ -13,10 +23,10 @@
       :pullUpLoad="true"
       @pullingUp="loadMore"
     >
-      <HomeSwiper :banners="banners" />
+      <HomeSwiper :banners="banners" @swiperImageLoad="offsetWithImg" />
       <RecommendView :recommends="recommends" />
       <FeatureView />
-      <TabControl :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
+      <TabControl :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabControlIn" />
       <GoodsList :goods="showGoods" />
     </Scroll>
     <!-- 1. back-top组件绑定click.native点击事件，发生点击时会调用backClick拿到scroll组件 -->
@@ -29,6 +39,8 @@
 
 <script>
 import { getHomeMultidata, getHomeGoods } from "network/home";
+
+import { debounce } from "common/utils";
 
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/common/scroll/Scroll";
@@ -63,9 +75,9 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop", // goods的当前类型，默认是pop
-      ifShowBackTop: false, // 是否显示回到顶部
+      ifShowBackTop: false, // 控制是否显示回到顶部
       tabOffsetTop: 0, // tabControl距离顶部的距离
-      isTabFixed: false, // 决定tabControl是否吸顶
+      isTabFixed: false, // 控制tabControl是否吸顶
       leaveY: 0 // 用户离开首页时，记录下当前浏览到的位置
     };
   },
@@ -79,12 +91,23 @@ export default {
   },
   mounted() {
     // 1. GoodsListItem中图片加载完成则刷新
-    // 将调用刷新放进防抖函数中
-    const refresh = this.debounce(this.$refs.scroll.refresh, 200);
+    // 将调用刷新放进防抖函数中，生成一个带防抖的新函数
+    const refresh = debounce(this.$refs.scroll.refresh, 200);
     // homeItemImageLoad方法在GoodsListItem中
     this.$bus.$on("homeItemImgLoad", () => {
+      // 刷新时调用的是我们生成的带防抖的新函数，而不是直接调用scroll原生的refresh
       refresh();
     });
+  },
+  // 用户离开首页时，记录下离开时的位置
+  deactivated() {
+    this.leaveY = this.$refs.scroll.scroll.y;
+  },
+  // 用户再次回到首页时，无延时跳转到上次位置，解决回到首页有时会返回最顶部而不是之前的位置的问题
+  // 并刷新页面防止出现无法拖动等bug
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.leaveY, 0);
+    this.$refs.scroll.refresh();
   },
   methods: {
     // 以下为事件监听相关方法
@@ -103,6 +126,10 @@ export default {
           this.currentType = "sell";
           break;
       }
+
+      // 2. 将scroll外面的tabControl与里面的tabControl的同步
+      this.$refs.tabControlIn.currentIndex = index;
+      this.$refs.tabControlOut.currentIndex = index;
     },
 
     // 设置“回到顶部”按钮所返回的位置以及动画时间
@@ -118,6 +145,9 @@ export default {
       // 当向下滚动距离大于1000时隐藏“回到顶部”
       // 由于向下y是负的，所以position前要加负号
       this.ifShowBackTop = -position.y > 1000;
+
+      // 2. 决定tabControl是否吸顶
+      this.isTabFixed = -position.y > this.tabOffsetTop;
     },
 
     // 拉到底部继续上拉时被调用，调用getHomeGoods加载更多数据
@@ -125,19 +155,15 @@ export default {
       this.getHomeGoods(this.currentType);
     },
 
-    // 防抖动：避免每个GoddsListItem图片加载成功就refresh一次,而是设定一个delay时间，
-    // 在delay时间内如果有新的图片加载则不会refresh，而是等到超过delay都没有新图才会refresh
-    debounce(func, delay) {
-      let timer = null;
-      return function(...args) {
-        // 未发送过请求时timer为null，if (timer)为false，则不执行clearTimeout而往下执行setTimeout，
-        // 执行了setTimeout之后timer便不为null了，如果在delay时间内发生了新的请求则
-        //  if (timer)为true，执行clearTimeout重设定时器
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
-          func.apply(this, args);
-        }, delay);
-      };
+    // 在tabControl上面的那些图片加载完后，获取tabControl距离顶部的距离
+    offsetWithImg() {
+      // 1. 组件本身是没有offset的，只有组件内部的div等有，但所有组件都有一个属性$el，用于获取组件的元素
+      // 2. 图片有时加载太慢，如果一开始就获取tabOffsetTop可能图片还没加载，数值偏小；
+      // 所以要等轮播图加载完后swiperImageLoad被调用了，才去获取tabOffsetTop
+      // 3。 所有图片中，轮播图图片基本是最后加载的；
+      // 并且轮播图只要其中一张图加载，整个轮播图的高度也确定了（另外三张即使没加载也不会占用下方高度）；
+      // 因此只要轮播图加载了一张图，整个页面包含图片时的高度就确定了
+      this.tabOffsetTop = this.$refs.tabControlIn.$el.offsetTop;
     },
 
     // 以下为网络请求相关方法

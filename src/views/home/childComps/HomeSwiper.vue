@@ -33,7 +33,7 @@ export default {
   methods: {
     imageLoad() {
       // 轮播图有四张图，如果每张图加载完成都向外发送就太频繁了
-      // 因此通过判断isLoad实现只向外发送一次
+      // 这里只要4张图中任意一张加载完成即向外发送，因为此时轮播图部分的高度已确定，我们的目的也就达到了
       if (!this.isLoad) {
         this.$emit("swiperImageLoad");
         this.isLoad = true;
