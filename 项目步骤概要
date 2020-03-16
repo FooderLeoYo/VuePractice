@@ -25,7 +25,13 @@
 
 7. 配置路由
 
-8. 将better-scroll插件封装成Scroll组件
+8. 封装网络请求
+	1. 安装axios
+	2. network文件夹下放request.js
+
+9. 封装防抖动函数：common下放utils.js
+
+10. 将better-scroll插件封装成Scroll组件
 	1. 安装：cnpm i better-scroll -S
 	2. components/common下建scroll文件夹，里面建Scroll.vue
 	3. Scroll.vue的template中放一个class为wrapper的div，wrapper里再放一个div，div里放一个slot
@@ -37,24 +43,20 @@
 		2. 初始化组件时应用监听类型：mounted的new BScroll中添加pullUpLoad: this.pullUpLoad
 		3. 监听拉到底部：Scroll.vue中的mounted给scroll绑定一个pullingUp，并发射出去
 
-9. 封装BackTop组件
+11. 封装BackTop组件
 	1. components/content下建backTop文件夹，里面建BackTop.vue
 	2. 插入图片，并调整样式
 
-10. 封装navBar：components/common下放navBar组件
+12. 封装navBar：components/common下放navBar组件
 
-11. 导入底部tabBar
+13. 导入底部tabBar
 	1. components/common下放tabBar组件
 	2. components/content下放mainTabBar组件
 	3. App.vue导入mainTabBar
 
-12. 封装网络请求
-	1. 安装axios
-	2. network文件夹下放request.js
+14. 封装tabControl：components/content下放tabControl组件
 
-13. 封装tabControl：components/content下放tabControl组件
-
-14. 首页
+15. 首页
 	1. Home.vue导入navBar，使用其center插槽做一个顶部导航栏
 	2. 使用better-scroll
 		1. 导入Scroll，并给<scroll>添加class="content"
@@ -70,10 +72,7 @@
 		2. views/home下新建childComps文件夹，放HomeSwiper.vue，并在Home中导入它
 	5. 推荐信息：views/home/childComps下放RecommendView.vue，并在Home中导入它
 	6. 本周流行：views/home/childComps下放FeatureView.vue，并在Home中导入它
-	7. tabcontrol
-		1. Home.vue中导入TabControl组件
-		2. 传titles给TabControl组件
-	8. 商品展示
+	7. 商品展示
 		1. network下home.js添加getHomeGoods方法
 		2. Home.vue中的methods添加getHomeGoods方法
 		3. Home.vue中的data添加goods和currentType属性，用来存储拿到的商品数据和记录当前显示的商品类型
@@ -82,11 +81,26 @@
 		6. Home.vue中导入GoodsList
 		7. Home.vue中的computed添加showGoods调取data中拿到的数据
 		8. <GoodsList>中通过绑定showGoods将数据传给GoodsList做展示
-	9. 点击tabControl切换到对应类型的商品
-		1. 点击TabControl时拿到点击的是几个：TabControl.vue中的tabClick添加this.$emit("tabClick", index);
-		2. Home.vue中的<TabControl>拿到tabClick，并将其绑定给tabClick方法
-		3. Home.vue的methods中添加tabClick方法，将currentType设置为当前所点击的类型
-	10. 使用BackTop组件
+	8. tabcontrol
+		1. Home.vue中导入TabControl组件
+		2. 传titles给TabControl组件
+		3. 点击tabControl切换到对应类型的商品
+			1. 点击TabControl时拿到点击的是几个：TabControl.vue中的tabClick添加this.$emit("tabClick", index);
+			2. Home.vue中的<TabControl>拿到tabClick，并将其绑定给tabClick方法
+			3. Home.vue的methods中添加tabClick方法，将currentType设置为当前所点击的类型
+		4.吸顶效果
+			1. Home.vue中的data添加tabOffsetTop记录tabControl距离顶部的距离
+			2. Home.vue中的<TabControl>添加ref="tabControlIn"
+			3. HomeSwiper.vue的<img>添加@load，拿到轮播图图片加载完成的时机
+			4. HomeSwiper.vue的methods添加imageLoad方法告知外部图片已加载，并利用isLoad只向外发送一次
+			5. Home.vue中的<HomeSwiper>拿到swiperImageLoad，并绑定offsetWithImg方法
+			6. Home.vue中的methods添加offsetWithImg方法，在所有图片都加载完后获取到tabControl距离顶部的距离
+			7. Home.vue中的data添加isTabFixed，控制tabControl是否吸顶
+			8. Home.vue中的contentScroll方法中，通过将当前位置与tabOffsetTop进行比较，决定是否吸顶
+			9. Home.vue中<Scroll>外再放一个<TabControl>，设置样式给z-index，并将isTabFixed绑定给v-show
+			10. Home.vue中分别给里外两个<TabControl>设置不同的ref
+			11. Home.vue中的tabClick方法内通过刚才的2个ref拿到2个<TabControl>，将index均赋值给2个<TabControl>的currentIndex
+	9. 使用BackTop组件
 		1. Home.vue中导入BackTop组件
 		2. <BackTop>添加点击事件，并绑定backClick方法
 		3. 给<Scroll>添加ref="scroll"，方便backClick方法拿到Scroll组件
@@ -100,14 +114,14 @@
 			6. Home.vue的<backTop>添加：v-show="ifShowBackTop"
 			7. Home.vue的data里添加ifShowBackTop: false
 			6. Home.vue的methods添加contentScroll方法，利用拿到的position并通过操作ifShowBackTop控制是否显示“回到顶部”
-	11. 上拉加载更多
+	10. 上拉加载更多
 		1. 首页告知Scroll需要监听上拉加载：Home.vue的<scroll>绑定:pullUpLoad="true"
 		2. 当拉到底部继续上拉，Scroll会向外发射pullingUp，Home.vue的<scroll>拿到pullingUp，并为其绑定loadMore方法
 		3. Home.vue的methods中添加loadMore方法，通过调用getHomeGoods加载更多商品数据
 		4. BScroll默认只能上拉加载一次，因此每次加载完要告知已加载
 			1. Home.vue的getHomeGoods中添加this.$refs.scroll.finishPullUp();
 			2. Scroll.vue的methods中添加finishPullUp方法
-	12. 解决BScroll有时无法拉动的BUG
+	11. 解决BScroll有时无法拉动的BUG
 		BUG原因：
 			1. BScroll内部有一个参数决定可滚动区域的高度，这个参数的值在BScroll被创建时就定下来了
 			2. 但当有时图片加载太慢，就会出现图片还未加载完这个参数的值就先定下来了
@@ -118,10 +132,20 @@
 			2. GoodsListItem.vue的methods添加imageLoad方法，对外发射告知已加载完图片
 			3. 由于imageLoad的数据传递用到数据总线，因此main.js中new另外一个Vue实例作为事件总线
 			4. 图片加载完后执行刷新，并防抖
-				1. Home.vue的methods添加debounce方法
-				2. Home.vue的mounted中，将调用刷新放进防抖函数中，并赋值给自定义变量refresh
+				1. Home.vue中导入debounce
+				2. Home.vue的mounted中，将调用刷新放进防抖函数中生成一个带防抖的新函数，并赋值给自定义变量refresh
 				3. Home.vue的mounted添加$bus.$on，每当有图片加载完成便执行refresh()
 			5. Scroll.vue中的methods添加refresh方法
+	12. 保留离开首页时的位置
+		1. 记录下离开时的位置
+			1. Home.vue中的data添加leaveY
+			2. Home.vue中添加deactivated，离开时记录位置
+		2. 用户再次回到首页时跳转到上次位置
+			1. Home.vue中添加activated，再次访问首页时跳转到leaveY处
+			2. 刷新页面防止出现无法拖动等bug
 
-
-	
+16. 商品详情页
+	1. views中添加detail组件，并配置路由
+	2. GoodsListItem.vue的div绑定点击事件：@click="itemClick"
+	3. GoodsListItem.vue的methods中添加itemClick方法，实现跳转到详情页
+	4. Detail.vue中data添加iid，created中通过动态路由拿到iid并保存
