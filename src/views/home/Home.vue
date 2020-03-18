@@ -40,7 +40,7 @@
 <script>
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
-import { debounce } from "common/utils";
+import { imgLoadMixin, backTopMixin } from "common/mixin";
 
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/common/scroll/Scroll";
@@ -59,7 +59,6 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
-    BackTop,
 
     HomeSwiper,
     RecommendView,
@@ -75,10 +74,10 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop", // goods的当前类型，默认是pop
-      ifShowBackTop: false, // 控制是否显示回到顶部
       tabOffsetTop: 0, // tabControl距离顶部的距离
       isTabFixed: false, // 控制tabControl是否吸顶
-      leaveY: 0 // 用户离开首页时，记录下当前浏览到的位置
+      leaveY: 0, // 用户离开首页时，记录下当前浏览到的位置
+      ifImgLoaded: "homeItemImgLoad" // 图片是否加载完
     };
   },
   created() {
@@ -89,16 +88,6 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
-  mounted() {
-    // 1. GoodsListItem中图片加载完成则刷新
-    // 将调用刷新放进防抖函数中，生成一个带防抖的新函数
-    const refresh = debounce(this.$refs.scroll.refresh, 200);
-    // homeItemImageLoad方法在GoodsListItem中
-    this.$bus.$on("homeItemImgLoad", () => {
-      // 刷新时调用的是我们生成的带防抖的新函数，而不是直接调用scroll原生的refresh
-      refresh();
-    });
-  },
   // 用户离开首页时，记录下离开时的位置
   deactivated() {
     this.leaveY = this.$refs.scroll.scroll.y;
@@ -107,7 +96,7 @@ export default {
   // 并刷新页面防止出现无法拖动等bug
   activated() {
     this.$refs.scroll.scrollTo(0, this.leaveY, 0);
-    this.$refs.scroll.refresh();
+    // this.$refs.scroll.refresh();
   },
   methods: {
     // 以下为事件监听相关方法
@@ -130,13 +119,6 @@ export default {
       // 2. 将scroll外面的tabControl与里面的tabControl的同步
       this.$refs.tabControlIn.currentIndex = index;
       this.$refs.tabControlOut.currentIndex = index;
-    },
-
-    // 设置“回到顶部”按钮所返回的位置以及动画时间
-    backClick() {
-      // 通过refs拿到scroll组件，进而调用scroll内部的scrollTo方法
-      // scrollTo方法在Scroll.vue中
-      this.$refs.scroll.scrollTo(0, 0, 1000);
     },
 
     // 发生滚动时的可能会调用的相关方法
@@ -194,7 +176,8 @@ export default {
     showGoods() {
       return this.goods[this.currentType].list;
     }
-  }
+  },
+  mixins: [imgLoadMixin, backTopMixin]
 };
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="goods-item" @click="itemClick">
     <!--@load获取到图片加载完成的时机后，调用imageLoad  -->
-    <img :src="goodsItem.show.img" @load="imageLoad" />
+    <img :src="imgSrc" @load="imageLoad" />
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -29,12 +29,23 @@ export default {
       // 2. Home和GooddsListItem是爷孙关系，数据传递麻烦，故采用事件总线实现直接通信
       // 3. 这个组件同时被Home和Detail使用，而当Home或Detail其中一方的图片加载完时不应该通知另外一方
       // 故加if判断，实现只通知自己
-      this.$bus.$emit("homeItemImgLoad");
+      if (this.$route.path.indexOf("/home")) {
+        this.$bus.$emit("homeItemImgLoad");
+      } else if (this.$route.path.indexOf("/detail")) {
+        this.$bus.$emit("detailItemImgLoad");
+      }
     },
 
     // 点击GoodsListItem后跳转到详情页
     itemClick() {
       this.$router.push("/detail/" + this.goodsItem.iid); // 用动态路由的方式拿到详情页id
+    }
+  },
+  computed: {
+    imgSrc() {
+      // 由于GoodsListItem同时被Home和Detail使用，故src要动态决定
+      // 第一个src时Detail的，第二个是GoodsListItem的
+      return this.goodsItem.image || this.goodsItem.show.img;
     }
   }
 };
