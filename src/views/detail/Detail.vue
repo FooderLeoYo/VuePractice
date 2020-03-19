@@ -1,16 +1,17 @@
 <template>
   <div class="detail">
-    <DetailNavBar class="detail-nav" />
+    <DetailNavBar class="detail-nav" ref="nav" @titleClick="titleClick" />
     <Scroll class="content" ref="scroll" :probeType="3" @scroll="contentScroll">
       <DetailSwiper :topImages="topImages" />
       <DetailBaseInfo :goods="goods" />
       <DetailShopInfo :shop="shop" />
       <DetailCommentInfo :comment-info="commentInfo" ref="comment" />
-      <DetailParamInfo :param-info="paramInfo" ref="param" />
+      <DetailParamInfo :param-info="paramInfo" ref="params" />
       <DetailGoodsInfo :detailInfo="detailInfo" @detailImgLoad="detailImgLoad" />
       <GoodsList :goods="recommends" ref="recommend" />
     </Scroll>
     <BackTop @click.native="backClick" v-show="ifShowBackTop" />
+    <DetailBottomBar @addToCart="addToCart" />
   </div>
 </template>
  
@@ -23,6 +24,9 @@ import {
   getRecommand
 } from "network/detail";
 
+import { mapActions } from "vuex";
+
+import { debounce } from "common/utils";
 import { imgLoadMixin, backTopMixin } from "common/mixin";
 
 import Scroll from "components/common/scroll/Scroll";
@@ -35,6 +39,7 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
+import DetailBottomBar from "./childComps/DetailBottomBar";
 
 export default {
   name: "Detail",
@@ -48,7 +53,8 @@ export default {
     DetailShopInfo,
     DetailCommentInfo,
     DetailParamInfo,
-    DetailGoodsInfo
+    DetailGoodsInfo,
+    DetailBottomBar
   },
   data() {
     return {
@@ -60,7 +66,9 @@ export default {
       paramInfo: {},
       commentInfo: {},
       recommends: [],
-      ifImgLoaded: "detailItemImgLoad"
+      ifImgLoaded: "detailItemImgLoad",
+      themeTopYs: [],
+      getThemeTopY: null
     };
   },
   created() {
@@ -105,13 +113,71 @@ export default {
     getRecommand().then(res => {
       this.recommends = res.data.list;
     });
+
+    // 4. 给getThemeTopY添加防抖功能
+    this.getThemeTopY = debounce(() => {
+      this.themeTopYs = [];
+      this.themeTopYs.push(0);
+      this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      this.themeTopYs.push(Number.MAX_VALUE); // 为了解决contentScroll方法中getThemeTopY[i + 1]可能会越界问题
+    }, 100);
   },
   methods: {
+    // 图片加载完后执行的相关方法
     detailImgLoad() {
       this.$refs.scroll.refresh();
+      this.getThemeTopY(); // 图片加载完后获取各部分距离顶部的距离
     },
+
+    // 发生滚动时调用的相关方法
     contentScroll(position) {
+      // 1. 滚到某个区域时，导航栏标题对应改变
+      const positionY = -position.y;
+      let length = this.themeTopYs.length;
+      for (let i = 0; i < length - 1; i++) {
+        if (
+          this.currentIndex !== i &&
+          positionY >= this.themeTopYs[i] &&
+          positionY < this.themeTopYs[i + 1]
+        ) {
+          this.currentIndex = i;
+          this.$refs.nav.currentIndex = this.currentIndex;
+          break;
+        }
+      }
+
+      // 2. 发生滚动时实时监听是否需要显示回到顶部
       this.ifShowBackTop = -position.y > 1000;
+    },
+
+    // 点击导航标题滚到对应内容区域
+    titleClick(index) {
+      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 100);
+    },
+
+    // 这里用到了mapActions导入actions.js中的addCart，之后就可以像调用一般方法一样地调用addCart了
+    ...mapActions(["addCart"]),
+    // 加入购物车
+    addToCart() {
+      //1. 获取购物车需要展示的数据
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.newPrice;
+      product.iid = this.iid;
+
+      // 2. 将商品添加到购物车里，本质是添加到了vuex的store中
+      // 这里用到Vuex，原因是：
+      // 一、Detail和购物车之间无父子关系，虽然可以通过中央事件总线实现数据传递，但有可能点击添加时购物车还没被创建
+      // 二、别的组件可能也会用到购物车中的信息，则又需要考虑新的数据传递问题，索性直接统一临时放到Vuex中
+      this.addCart(product).then(res => {
+        // toast是弹出窗
+        // 是components/common中的自定义全局组件
+        // this.$toast.show(res);
+      });
     }
   },
   computed: {
