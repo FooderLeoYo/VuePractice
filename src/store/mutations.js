@@ -15,7 +15,7 @@ export default {
 
   // 当放进购物车的商品是新的种类时，在cartList中添加这种新商品
   [ADD_TO_CART](state, payload) {
-    payload.checked = true
+    payload.checked = false
     state.cartList.push(payload)
   }
 }

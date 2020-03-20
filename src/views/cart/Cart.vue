@@ -5,22 +5,36 @@
         <div>购物车({{cartLength}})</div>
       </template>
     </NavBar>
+    <Scroll class="content" ref="scroll">
+      <CartList />
+    </Scroll>
+    <CartBottomBar class="bottom-bar" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 
-import Scroll from "components/common/scroll/Scroll";
 import NavBar from "components/common/navbar/NavBar";
+import Scroll from "components/common/scroll/Scroll";
+
+import CartList from "./childComps/CartList";
+import CartBottomBar from "./childComps/CartBottomBar";
 
 export default {
   name: "Cart",
   components: {
-    NavBar
+    NavBar,
+    Scroll,
+
+    CartList,
+    CartBottomBar
   },
   computed: {
     ...mapGetters(["cartLength"])
+  },
+  activated() {
+    this.$refs.scroll.refresh();
   }
 };
 </script>
@@ -32,5 +46,10 @@ export default {
 .nav-bar {
   background-color: var(--color-tint);
   color: #fff;
+}
+
+.content {
+  height: calc(100% - 44px - 49px - 40px);
+  overflow: hidden;
 }
 </style>
