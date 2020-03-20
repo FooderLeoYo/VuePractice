@@ -56,7 +56,9 @@
 
 14. 封装tabControl：components/content下放tabControl组件
 
-15. 首页
+15. 封装CheckButton：components/content下放CheckButton组件
+
+16. 首页
 	1. Home.vue导入navBar，使用其center插槽做一个顶部导航栏
 	2. 使用better-scroll
 		1. 导入Scroll，并给<scroll>添加class="content"
@@ -145,7 +147,7 @@
 			1. Home.vue中添加activated，再次访问首页时跳转到leaveY处
 			2. 刷新页面防止出现无法拖动等bug
 
-16. 商品详情页
+17. 商品详情页
 	1. views中添加detail组件，并配置路由
 	2. GoodsListItem.vue的div绑定点击事件：@click="itemClick"
 	3. GoodsListItem.vue的methods中添加itemClick方法，实现跳转到详情页
@@ -230,9 +232,27 @@
 			4. mutations.js中添加ADD_COUNTER，当放进购物车的商品是旧的种类时，该商品数量加一
 			5. Detail.vue中导入mapActions，methods中添加mapActions，以使用mapActions中的addCart方法
 
-17. 购物车
+18. 购物车
 	1. 导入NavBar
 	2. store下建getters.js，封装cartLength和cartList
 	3. Cart.vue中导入mapGetters，computed中添加mapGetters，以使用getters.js中封装的内容
-	4. 
+	4. 商品列表展示
+		1. CartList
+			1. Cart.vue中导入CartList
+			2. Cart.vue导入Scroll，activated中添加刷新，防止无法滚动的BUG
+			3. CartList.vue导入mapGetters，以便使用cartList
+			4. CartList.vue导入CartListItem，在其中通过v-for遍历cartList拿到item并通过itemInfo传给CartListItem
+		2. CartListItem
+			1. CartListItem.vue拿到itemInfo展示数据
+			2. 使用CheckButton
+				1. CartListItem.vue中导入CheckButton
+				2. <CheckButton>中将itemInfo.checked传递给isChecked，绑定点击事件checkClick
+				3. CartListItem.vue的methods中添加checkClick方法，点击时往复切换itemInfo.checked的值
+	5. 底部工具栏
+		1. Cart.vue中导入CartBottomBar、mapGetters，computed中添加mapGetters
+		2. CartBottomBar.vue中导入checkButton
+		2. 根据商品列表是否全选，决定全选按钮是否被选中
+			1. 将isSelectAll传递给isChecked
+			2. computed中添加isSelectAll
+		3. 
 
