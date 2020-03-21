@@ -231,6 +231,16 @@
 			3. mutations.js中添加ADD_TO_CART，当放进购物车的商品是新的种类时，在cartList中添加这种新商品
 			4. mutations.js中添加ADD_COUNTER，当放进购物车的商品是旧的种类时，该商品数量加一
 			5. Detail.vue中导入mapActions，methods中添加mapActions，以使用mapActions中的addCart方法
+	18. 添加商品弹出窗
+		1. 封装toast组件（插件方式）
+			1. components/common下放toast组件
+			2. components/common/toast下建index.js，导入vue，以“插件方式”封装toast组件
+			3. main.js中导入toast，并安装
+
+
+
+			1. actions.js中将addCart里的内容包在一个Promise里，以通知Detail添加的是新商品还是旧商品
+			2. Detail.vue的addToCart中调用addCart后，调用toast显示弹窗
 
 18. 购物车
 	1. 导入NavBar
@@ -251,8 +261,12 @@
 	5. 底部工具栏
 		1. Cart.vue中导入CartBottomBar、mapGetters，computed中添加mapGetters
 		2. CartBottomBar.vue中导入checkButton
-		2. 根据商品列表是否全选，决定全选按钮是否被选中
+		3. 根据商品列表是否全选，决定全选按钮是否被选中
 			1. 将isSelectAll传递给isChecked
 			2. computed中添加isSelectAll
-		3. 
 
+19. 解决移动端300ms延时
+	1. 安装fastclick
+	2. main.js导入FastClick，并attach到body
+
+20. vue-lazyload框架
