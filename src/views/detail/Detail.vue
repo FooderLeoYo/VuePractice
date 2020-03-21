@@ -176,7 +176,7 @@ export default {
       this.addCart(product).then(res => {
         // toast是弹出窗
         // 是components/common中的自定义全局组件
-        // this.$toast.show(res);
+        this.$toast.toastMes(res);
       });
     }
   },

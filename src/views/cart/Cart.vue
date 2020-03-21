@@ -8,7 +8,7 @@
     <Scroll class="content" ref="scroll">
       <CartList />
     </Scroll>
-    <CartBottomBar class="bottom-bar" />
+    <CartBottomBar />
   </div>
 </template>
 

@@ -62,8 +62,6 @@ export default {
 
 <style scoped>
 .bottom-bar {
-  /* position: relative; */
-  /* bottom: 40px; */
   display: flex;
   height: 40px;
   line-height: 40px;
