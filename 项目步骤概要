@@ -58,7 +58,20 @@
 
 15. 封装CheckButton：components/content下放CheckButton组件
 
-16. 首页
+16. 解决移动端300ms延时
+	1. 安装fastclick
+	2. main.js导入FastClick，并attach到body
+
+17. vue-lazyload框架
+	1. 安装：cnpm i vue-lazyload -S
+	2. main.js导入VueLazyload，并使用该插件
+	3. 需要使用懒加载处的<img>，:src=改为v-lazy=
+
+18. px2vw-css单位转化插件
+	1. 安装：cnpm i postcss-to-viewport -D
+	2. 最外层目录添加：postcss.config.js
+
+19. 首页
 	1. Home.vue导入navBar，使用其center插槽做一个顶部导航栏
 	2. 使用better-scroll
 		1. 导入Scroll，并给<scroll>添加class="content"
@@ -147,7 +160,7 @@
 			1. Home.vue中添加activated，再次访问首页时跳转到leaveY处
 			2. 刷新页面防止出现无法拖动等bug
 
-17. 商品详情页
+20. 商品详情页
 	1. views中添加detail组件，并配置路由
 	2. GoodsListItem.vue的div绑定点击事件：@click="itemClick"
 	3. GoodsListItem.vue的methods中添加itemClick方法，实现跳转到详情页
@@ -242,7 +255,7 @@
 			1. actions.js中将addCart里的内容包在一个Promise里，以通知Detail添加的是新商品还是旧商品
 			2. Detail.vue的addToCart中调用addCart后，调用toast显示弹窗
 
-18. 购物车
+21. 购物车
 	1. 导入NavBar
 	2. store下建getters.js，封装cartLength和cartList
 	3. Cart.vue中导入mapGetters，computed中添加mapGetters，以使用getters.js中封装的内容
@@ -264,9 +277,3 @@
 		3. 根据商品列表是否全选，决定全选按钮是否被选中
 			1. 将isSelectAll传递给isChecked
 			2. computed中添加isSelectAll
-
-19. 解决移动端300ms延时
-	1. 安装fastclick
-	2. main.js导入FastClick，并attach到body
-
-20. vue-lazyload框架
