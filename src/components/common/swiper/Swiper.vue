@@ -79,6 +79,9 @@ export default {
 
       // 3.如果大于1个, 那么在前后分别添加一个slide
       if (this.slideCount > 1) {
+        // 前后都加复制
+        // 如果没有复制，直接改变大图显示位置的话，图片就会闪现而没有滚动动画效果
+        // 比如滚到slidesEls[slideCount]后，先让图滚到cloneLast，然后无延时跳转到slidesEls[1]
         let cloneFirst = slidesEls[0].cloneNode(true);
         let cloneLast = slidesEls[this.slideCount - 1].cloneNode(true);
         // 注意这里是在slidesEls[0]前加一个cloneLast，而不是在最前面加两个元素
@@ -119,7 +122,7 @@ export default {
       this.swiperStyle.transition = "transform " + this.animDuration + "ms";
       this.setTransform(currentPosition);
 
-      // 2.判断滚动到的位置
+      // 2.判断大图是否到最后一张或第一张
       this.checkPosition();
 
       // 4.滚动完成
@@ -127,17 +130,19 @@ export default {
     },
 
     /**
-     * 校验正确的位置
+     * 处理图片到了最后一张或第一张时的情况
      */
     checkPosition: function() {
       window.setTimeout(() => {
         // 1.校验正确的位置
+        // 设置动画延时为0，无延时切换到slidesEls[1]或slidesEls[slideCount]
         this.swiperStyle.transition = "0ms";
-        // 如果已播放了slideCount张图片，即图片播放完了
+        // 如果大图（播放或被拖动）到第cloneLast处，当前位置为cloneLast
         if (this.currentIndex >= this.slideCount + 1) {
-          // 重置currentIndex和大图显示位置
+          // 重置currentIndex和大图显示位置，让大图无延时跳到slidesEls[1]处
           this.currentIndex = 1;
           this.setTransform(-this.currentIndex * this.swiperWidth);
+          // 如果大图被拖动到cloneFirst处，让大图无延时跳到slidesEls[slideCount]处
         } else if (this.currentIndex <= 0) {
           this.currentIndex = this.slideCount;
           this.setTransform(-this.currentIndex * this.swiperWidth);
