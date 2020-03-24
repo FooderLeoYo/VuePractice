@@ -92,11 +92,11 @@ export default {
   deactivated() {
     this.leaveY = this.$refs.scroll.scroll.y;
   },
-  // 用户再次回到首页时，无延时跳转到上次位置，解决回到首页有时会返回最顶部而不是之前的位置的问题
+  // 用户再次回到首页时，跳转到上次位置，解决回到首页有时会返回最顶部而不是之前的位置的问题
   // 并刷新页面防止出现无法拖动等bug
   activated() {
-    this.$refs.scroll.scrollTo(0, this.leaveY, 0);
-    // this.$refs.scroll.refresh();
+    this.$refs.scroll.scrollTo(0, this.leaveY, 1); /* 最后一个参数给0会无效 */
+    this.$refs.scroll.refresh();
   },
   methods: {
     // 以下为事件监听相关方法

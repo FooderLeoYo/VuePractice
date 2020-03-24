@@ -2,7 +2,7 @@
   <div class="detail">
     <DetailNavBar class="detail-nav" ref="nav" @titleClick="titleClick" />
     <Scroll class="content" ref="scroll" :probeType="3" @scroll="contentScroll">
-      <DetailSwiper :topImages="topImages" />
+      <DetailSwiper class="detail-swiper" :topImages="topImages" />
       <DetailBaseInfo :goods="goods" />
       <DetailShopInfo :shop="shop" />
       <DetailCommentInfo :comment-info="commentInfo" ref="comment" />
@@ -209,5 +209,10 @@ export default {
 
 .content {
   height: calc(100% - 44px);
+}
+
+.detail-swiper {
+  height: 300px;
+  overflow: hidden;
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
   <div class="goods-item" @click="itemClick">
     <!--@load获取到图片加载完成的时机后，调用imageLoad  -->
-    <img :src="imgSrc" @load="imageLoad" />
+    <!-- v-lazy使用了懒加载 -->
+    <img v-lazy="imgSrc" @load="imageLoad" />
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
