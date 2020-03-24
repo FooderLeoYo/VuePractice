@@ -1,0 +1,35 @@
+1. handleDom
+	1. this.slideCount记录有几个slide
+	2. 如果图片多于一张，在最前和最后分别添加最后一张和第一张的复制
+	3. this.swiperWidth记录每张图的宽度
+	4. this.swiperStyle记录swiper的行内样式
+	5. 让swiper元素, 从slidesEls[1]开始显示
+
+2. startTimer
+	给window添加一个setInterval，每interval时间执行：
+	1. currentIndex++
+	2. 调用scrollContent，当前位置为-this.currentIndex * this.swiperWidth
+		1. this.scrolling = true，标记正在滚动
+		2. this.swiperStyle.transition设置动画延时
+		3. 调用setTransform，使大图位移到currentPosition
+			1. 利用translate3d实现图片位移
+		4. 调用checkPosition，判断大图是否到最后一张或第一张
+			1. 设置动画延时为0，无延时切换到slidesEls[1]或slidesEls[slideCount]
+			2. 判断大图是到最后一张还是第一张，对应地跳到真实图片处
+			3. 向外发射告知已完成（目前没有地方需要用到这个功能）
+		5. this.scrolling = false，标记滚动完成
+
+3. 给swiper绑定touchstart触摸事件touchStart
+	1.如果正在滚动, 不可以拖动
+	2. 若非正在滚动，停止定时器，避免出现手指按住时轮播图仍然滚动
+	3. 保存开始滚动的位置到this.startX
+
+4. 给swiper绑定touchmove触摸事件touchMove
+	1. 计算出用户拖动后，得到图片所处的位置touchMovePos
+	2. 通过调用setTransform，将大图显示位置设置为当前位置
+
+5. 给swiper绑定touchend触摸事件touchEnd
+	1. 获取手指离开时拖动的距离（包含正负符号）currentMove
+	2. 根据currentMove，判断是否拖动，是向右还是向左拖动，对应地调整currentIndex
+	3. 调整完currentIndex，调用scrollContent使图片滚到指定位置
+	4. 重新开启定时器
