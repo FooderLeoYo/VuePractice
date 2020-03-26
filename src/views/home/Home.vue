@@ -189,7 +189,7 @@ export default {
 
 .home-nav {
   background-color: var(--color-tint);
-  color: #fff;
+  color: #eee;
 }
 
 .content {

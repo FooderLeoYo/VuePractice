@@ -24,4 +24,5 @@ export default {
 
 <style>
 @import "assets/css/base.css"; /* style中使用路径别名需要加@ */
+@import "assets/css/icon.css";
 </style>
