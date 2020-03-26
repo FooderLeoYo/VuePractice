@@ -23,15 +23,28 @@
 
 6. 统一全局格式：和package.json同级放.editorconfig
 
-7. 配置路由
+7. px2vw-css单位转化插件，应用vw移动端适配方案（取代rem）
+	1. 安装：cnpm i postcss-to-viewport -D
+	2. 最外层目录添加：postcss.config.js
+  
+8. 解决移动端300ms延时
+	1. 安装fastclick
+	2. main.js导入FastClick，并attach到body
 
-8. 封装网络请求
+9. vue-lazyload框架，实现图片懒加载
+	1. 安装：cnpm i vue-lazyload -S
+	2. main.js导入VueLazyload，并使用该插件
+	3. 需要使用懒加载处的<img>，:src=改为v-lazy=  
+
+10. 配置路由
+
+11. 封装网络请求
 	1. 安装axios
 	2. network文件夹下放request.js
 
-9. 封装防抖动函数：common下放utils.js
+12. 封装防抖动函数：common下放utils.js
 
-10. 将better-scroll插件封装成Scroll组件
+13. 将better-scroll插件封装成Scroll组件
 	1. 安装：cnpm i better-scroll -S
 	2. components/common下建scroll文件夹，里面建Scroll.vue
 	3. Scroll.vue的template中放一个class为wrapper的div，wrapper里再放一个div，div里放一个slot
@@ -43,33 +56,20 @@
 		2. 初始化组件时应用监听类型：mounted的new BScroll中添加pullUpLoad: this.pullUpLoad
 		3. 监听拉到底部：Scroll.vue中的mounted给scroll绑定一个pullingUp，并发射出去
 
-11. 封装BackTop组件
+14. 封装BackTop组件
 	1. components/content下建backTop文件夹，里面建BackTop.vue
 	2. 插入图片，并调整样式
 
-12. 封装navBar：components/common下放navBar组件
+15. 封装navBar：components/common下放navBar组件
 
-13. 导入底部tabBar
+16. 导入底部tabBar
 	1. components/common下放tabBar组件
 	2. components/content下放mainTabBar组件
 	3. App.vue导入mainTabBar
 
-14. 封装tabControl：components/content下放tabControl组件
+17. 封装tabControl：components/content下放tabControl组件
 
-15. 封装CheckButton：components/content下放CheckButton组件
-
-16. 解决移动端300ms延时
-	1. 安装fastclick
-	2. main.js导入FastClick，并attach到body
-
-17. vue-lazyload框架
-	1. 安装：cnpm i vue-lazyload -S
-	2. main.js导入VueLazyload，并使用该插件
-	3. 需要使用懒加载处的<img>，:src=改为v-lazy=
-
-18. px2vw-css单位转化插件
-	1. 安装：cnpm i postcss-to-viewport -D
-	2. 最外层目录添加：postcss.config.js
+18. 封装CheckButton：components/content下放CheckButton组件
 
 19. 首页
 	1. Home.vue导入navBar，使用其center插槽做一个顶部导航栏
