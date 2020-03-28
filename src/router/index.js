@@ -8,6 +8,7 @@ const Category = () => import('views/category/Category')
 const Cart = () => import('views/cart/Cart')
 const Profile = () => import('views/profile/Profile')
 const Detail = () => import('views/detail/Detail')
+const Register = () => import('views/register/Register')
 
 Vue.use(VueRouter)
 
@@ -35,6 +36,10 @@ const routes = [
   {
     path: '/detail/:iid', // 动态路由给path添加id
     component: Detail
+  },
+  {
+    path: '/register',
+    component: Register
   },
 ]
 
