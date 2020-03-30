@@ -1,10 +1,10 @@
 <template>
   <div id="home">
-    <NavBar class="home-nav">
+    <TopBar class="home-nav">
       <template #center>
         <div>购物街</div>
       </template>
-    </NavBar>
+    </TopBar>
     <!-- 在scroll外面又放一个tab-control是因为scroll里面那个tab-control会随着上拉一起往上跑，无法吸顶 -->
     <!-- 原因是BScroll是通过transform: translate来实现滚动，而即使设置了fixed的元素transform后依然会动 -->
     <!-- 外面的这个tab-control一开始是隐藏的，屏幕上拉到scroll里面那个tab-control的位置时正好显示出来 -->
@@ -42,7 +42,7 @@ import { getHomeMultidata, getHomeGoods } from "network/home";
 
 import { imgLoadMixin, backTopMixin } from "common/mixin";
 
-import NavBar from "components/common/navbar/NavBar";
+import TopBar from "components/common/topbar/TopBar";
 import Scroll from "components/common/scroll/Scroll";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goodsList/GoodsList";
@@ -55,7 +55,7 @@ import FeatureView from "./childComps/FeatureView";
 export default {
   name: "Home",
   components: {
-    NavBar,
+    TopBar,
     Scroll,
     TabControl,
     GoodsList,

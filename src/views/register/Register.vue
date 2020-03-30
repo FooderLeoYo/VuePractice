@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <NavBar>
+    <TopBar>
       <template #left>
         <div class="back" @click="backClick">
           <img src="~assets/img/common/back.svg" alt />
@@ -9,7 +9,7 @@
       <template #center>
         <div>新用户注册</div>
       </template>
-    </NavBar>
+    </TopBar>
 
     <div class="main">
       <div class="inBox">
@@ -35,16 +35,14 @@
 </template>
  
 <script>
-import { isDuplicate } from "network/register";
-
-import NavBar from "components/common/navbar/NavBar";
+import TopBar from "components/common/topbar/TopBar";
 
 import GetVerCode from "./childComps/GetVerCode";
 
 export default {
   name: "Register",
   components: {
-    NavBar,
+    TopBar,
 
     GetVerCode
   },

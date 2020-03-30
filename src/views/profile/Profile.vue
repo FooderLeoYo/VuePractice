@@ -1,11 +1,11 @@
 <template>
   <div class="profile">
     <!-- 顶部导航 -->
-    <NavBar class="profile-nav">
+    <TopBar class="profile-nav">
       <template #center>
         <div>我的档案</div>
       </template>
-    </NavBar>
+    </TopBar>
     <Login @click.native="loginClick" />
     <Data />
     <div class="threeOpts">
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import NavBar from "components/common/navbar/NavBar";
+import TopBar from "components/common/topbar/TopBar";
 
 import Login from "./childComps/Login";
 import Data from "./childComps/Data";
@@ -66,7 +66,7 @@ import optBtn from "./childComps/optBtn";
 export default {
   name: "Profile",
   components: {
-    NavBar,
+    TopBar,
 
     Login,
     Data,

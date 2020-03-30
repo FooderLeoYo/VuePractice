@@ -1,10 +1,10 @@
 <template>
   <div class="cart">
-    <NavBar class="nav-bar">
+    <TopBar class="nav-bar">
       <template #center>
         <div>购物车({{cartLength}})</div>
       </template>
-    </NavBar>
+    </TopBar>
     <Scroll class="content" ref="scroll">
       <CartList />
     </Scroll>
@@ -15,7 +15,7 @@
 <script>
 import { mapGetters } from "vuex";
 
-import NavBar from "components/common/navbar/NavBar";
+import TopBar from "components/common/topbar/TopBar";
 import Scroll from "components/common/scroll/Scroll";
 
 import CartList from "./childComps/CartList";
@@ -24,7 +24,7 @@ import CartBottomBar from "./childComps/CartBottomBar";
 export default {
   name: "Cart",
   components: {
-    NavBar,
+    TopBar,
     Scroll,
 
     CartList,

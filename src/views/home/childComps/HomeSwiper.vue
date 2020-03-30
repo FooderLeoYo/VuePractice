@@ -18,10 +18,6 @@ export default {
       isLoad: false
     };
   },
-  components: {
-    Swiper,
-    SwiperItem
-  },
   props: {
     banners: {
       type: Array,
@@ -29,6 +25,10 @@ export default {
         return [];
       }
     }
+  },
+  components: {
+    Swiper,
+    SwiperItem
   },
   methods: {
     imageLoad() {

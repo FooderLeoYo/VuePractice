@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar>
+    <TopBar>
       <div slot="left" class="back" @click="backClick">
         <img src="~assets/img/common/back.svg" alt />
       </div>
@@ -13,16 +13,16 @@
           :key="index"
         >{{item}}</div>
       </div>
-    </NavBar>
+    </TopBar>
   </div>
 </template>
 
 <script>
-import NavBar from "components/common/navbar/NavBar";
+import TopBar from "components/common/topbar/TopBar";
 export default {
   name: "DetailNavBar",
   components: {
-    NavBar
+    TopBar
   },
   data() {
     return {
