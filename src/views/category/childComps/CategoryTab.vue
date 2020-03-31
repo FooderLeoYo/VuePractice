@@ -1,18 +1,18 @@
 <template>
-  <div class="CategoryList">
+  <div class="CategoryTab">
     <div
-      class="categoryListItem"
+      class="CategoryTabItem"
       v-for="(item, index) in categoryData"
-      :key="index"
-      @click="listClick(index)"
+      @click="tabClick(index)"
       :class="{active: index === currentIndex}"
+      :key="index"
     >{{item.title}}</div>
   </div>
 </template>
  
 <script>
 export default {
-  name: "CategoryList",
+  name: "CategoryTab",
   data() {
     return {
       currentIndex: 0
@@ -27,22 +27,22 @@ export default {
     }
   },
   methods: {
-    listClick(index) {
+    tabClick(index) {
       this.currentIndex = index;
-      this.$emit("listClick", index);
+      this.$emit("tabClick", index);
     }
   }
 };
 </script>
  
 <style scoped>
-.CategoryList {
+.CategoryTab {
   display: flex;
   flex-direction: column;
   width: 110px;
 }
 
-.categoryListItem {
+.CategoryTabItem {
   flex: 1;
   height: 47px;
   line-height: 50px;

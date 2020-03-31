@@ -7,7 +7,7 @@ export function getCategory() {
 }
 
 // CategoryDetai需要的数据不在categoryData中，需要根据maitKey才能拿到
-export function getSubCategory(maitKey) {
+export function getDetail(maitKey) {
   return request({
     url: '/subcategory',
     params: {

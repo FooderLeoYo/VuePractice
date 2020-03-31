@@ -5,88 +5,83 @@
         <div>商品分类</div>
       </template>
     </TopBar>
-    <div class="main">
-      <CategoryList class="CategoryList" :categoryData="categoryData" @listClick="listClick" />
+    <Scroll class="tabContent" ref="tabScroll">
+      <CategoryTab class="CategoryTab" :categoryData="categoryData" @tabClick="tabClick" />
+    </Scroll>
+    <Scroll class="detailContent" ref="detailScroll">
       <CategoryDetail
         class="CategoryDetail"
-        :subCategory="subCategory"
+        :detailData="detailData"
         :currentIndex="currentIndex"
+        @componentImgLoaded="componentImgLoaded"
       />
-    </div>
+    </Scroll>
   </div>
 </template>
 
 <script>
-import { getCategory, getSubCategory } from "network/category";
+import { getCategory, getDetail } from "network/category";
+
+import { debounce } from "common/utils";
 
 import TopBar from "components/common/topbar/TopBar";
+import Scroll from "components/common/scroll/Scroll";
 
-import CategoryList from "./childComps/CategoryList";
+import CategoryTab from "./childComps/CategoryTab";
 import CategoryDetail from "./childComps/CategoryDetail";
 
 export default {
   name: "Category",
   components: {
     TopBar,
+    Scroll,
 
-    CategoryList,
+    CategoryTab,
     CategoryDetail
   },
   data() {
     return {
       categoryData: [],
-      categoryDisplay: {},
-      currentIndex: -1
+      categoryDetailData: [],
+      currentIndex: 0,
+      categoryImgLoaded: null
     };
   },
   created() {
     // 网络请求拿到数据
     getCategory().then(res => {
       this.categoryData = res.data.category.list;
-      let len = this.categoryData.length;
-      for (let i = 0; i < len; i++) {
-        this.categoryDisplay[i] = {
-          catType: {}
-        };
-      }
       // CategoryDetai需要的数据不在categoryData中，需要根据maitKey才能拿到
-      // new Promise((resolve, reject) => {
-      //   let len = this.categoryData.length;
-      //   for (let i = 0; i < len; i++) {
-      //     getSubCategory(this.categoryData[i].maitKey).then(res => {
-      //       this.categoryDisplay[i] = res.data.list;
-      //     });
-      //     resolve(this.categoryDisplay);
-      //   }
-      // }).then(res => {
-      //   console.log(res);
-      // });
-      this.getDisplayData(0);
+      this.getDetailData(0);
     });
   },
   mounted() {
-    // console.log(this.categoryDisplay);
-    // console.log(this.categoryDisplay);
-    // console.log(this.categoryDisplay[0]);
+    // 将刷新函数装进防抖中
+    this.categoryImgLoaded = debounce(() => {
+      this.$refs.detailScroll.refresh();
+    });
   },
   methods: {
-    getDisplayData(index) {
-      this.currentIndex = index;
-      getSubCategory(this.categoryData[index].maitKey).then(res => {
-        this.categoryDisplay[index].catType = res.data;
-        this.categoryDisplay = { ...this.categoryDisplay };
+    getDetailData(index) {
+      getDetail(this.categoryData[index].maitKey).then(res => {
+        this.categoryDetailData[index] = res.data.list;
+        // 能加快加载速度
+        this.categoryDetailData = [...this.categoryDetailData];
       });
     },
-    // 列表点击
-    listClick(index) {
+    // 点击CategoryList
+    tabClick(index) {
       this.currentIndex = index;
-      this.getDisplayData(index);
+      this.getDetailData(this.currentIndex);
+    },
+    // 图片加载完后调用categoryImgLoad刷新页面
+    componentImgLoaded() {
+      this.categoryImgLoaded();
     }
   },
   computed: {
-    subCategory() {
-      if (this.currentIndex === -1) return {};
-      return this.categoryDisplay[this.currentIndex].catType;
+    detailData() {
+      return this.categoryDetailData[this.currentIndex];
     }
   }
 };
@@ -94,11 +89,30 @@ export default {
 
 <style scoped>
 .category {
+  position: relative;
   height: 100vh;
 }
 
 .categoryTopBar {
   background-color: var(--color-tint);
   color: #eee;
+}
+
+.tabContent,
+.detailContent {
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+}
+
+.tabContent {
+  left: 0;
+  right: calc(100% - 110px);
+}
+
+.detailContent {
+  left: 110px;
+  right: 0;
 }
 </style>
