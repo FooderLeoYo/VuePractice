@@ -12,11 +12,6 @@
 <script>
 export default {
   name: "CategoryDetail",
-  data() {
-    return {
-      currentIndex: 0
-    };
-  },
   props: {
     detailData: {
       type: Array,

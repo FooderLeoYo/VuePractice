@@ -12,7 +12,6 @@
       <CategoryDetail
         class="CategoryDetail"
         :detailData="detailData"
-        :currentIndex="currentIndex"
         @componentImgLoaded="componentImgLoaded"
       />
     </Scroll>
@@ -52,6 +51,7 @@ export default {
     getCategory().then(res => {
       this.categoryData = res.data.category.list;
       // CategoryDetai需要的数据不在categoryData中，需要根据maitKey才能拿到
+      // 获取index=0的数据，做初始化
       this.getDetailData(0);
     });
   },
