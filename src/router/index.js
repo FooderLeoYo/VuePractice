@@ -8,7 +8,7 @@ const Category = () => import('views/category/Category')
 const Cart = () => import('views/cart/Cart')
 const Profile = () => import('views/profile/Profile')
 const Detail = () => import('views/detail/Detail')
-const Register = () => import('views/register/Register')
+const LorR = () => import('views/lorr/LorR')
 
 Vue.use(VueRouter)
 
@@ -38,8 +38,8 @@ const routes = [
     component: Detail
   },
   {
-    path: '/register',
-    component: Register
+    path: '/lorr',
+    component: LorR
   },
 ]
 

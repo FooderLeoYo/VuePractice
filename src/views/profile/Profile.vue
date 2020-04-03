@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     loginClick() {
-      this.$router.replace("/register");
+      this.$router.replace("/lorr");
     }
   }
 };

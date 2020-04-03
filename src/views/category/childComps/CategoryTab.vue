@@ -52,9 +52,9 @@ export default {
 }
 
 .active {
-  border-left: 5px solid var(--color-tint);
+  border-left: 5px solid var(--color-high-text);
   background-color: #fff;
-  color: var(--color-tint);
+  color: var(--color-high-text);
   font-weight: 900;
 }
 </style>
