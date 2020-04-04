@@ -74,7 +74,8 @@ export default {
   },
   methods: {
     loginClick() {
-      this.$router.replace("/lorr");
+      // 注意这里一定要用push，如果是replace则无法从登录页面返回
+      this.$router.push("/lorr");
     }
   }
 };

@@ -32,25 +32,24 @@ export default {
  
 <style scoped>
 .SwitchLR {
-  height: 40px;
+  display: flex;
+  height: 50px;
   line-height: 40px;
-  margin-bottom: 10px;
 }
 
 .L,
 .R {
+  flex: 1;
   display: inline-block;
   width: 80px;
 }
 
 .L {
-  margin-left: 58px;
-  margin-right: 29px;
+  padding-left: 25px;
 }
 
 .R {
-  margin-left: 29px;
-  margin-right: 58px;
+  padding-right: 25px;
 }
 
 .Litem,

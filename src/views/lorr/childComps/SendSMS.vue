@@ -32,13 +32,8 @@ export default {
  
 <style scoped>
 .SendSMS {
-  width: 60px;
-  height: 30px;
-  line-height: 30px;
   text-align: center;
   color: #ffffff;
-  border-radius: 3px;
-  font-size: 5px;
 }
 
 .requestSMS {

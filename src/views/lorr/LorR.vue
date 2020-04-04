@@ -10,38 +10,15 @@
 
     <div class="main">
       <!-- 切换登录/注册 -->
-      <SwitchLR @changeType="changeType" />
+      <SwitchLR class="switchLorR" @changeType="changeType" />
       <!-- 登录 -->
       <Login v-if="LoinOrRegi === 'login'" />
       <!-- 注册 -->
       <Register v-else />
-      <!-- 其他登录方式分割线 -->
-      <div class="thirdpartydivide">其他登录方式</div>
       <!-- 三方登录 -->
-      <div class="thirdpartylogin">
-        <div class="thirdpartyitem wechat">
-          <div class="iconfont">&#xe655;</div>
-          <div>微信登录</div>
-        </div>
-        <div class="thirdpartyitem qq">
-          <div class="iconfont">&#xe775;</div>
-          <div>QQ登录</div>
-        </div>
-        <div class="thirdpartyitem weibo">
-          <div class="iconfont">&#xe604;</div>
-          <div>微博登录</div>
-        </div>
-      </div>
+      <ThirdPartyLogin class="thirdPartyLogin" />
       <!-- 用户协议 -->
-      <div class="agreement">
-        <p>
-          温馨提示：
-          <br />未注册的手机号，登录时将自动注册，且代表同意
-          <a href>用户协议</a>
-          、
-          <a href>隐私策略</a>
-        </p>
-      </div>
+      <Agreement class="agreement" />
     </div>
   </div>
 </template>
@@ -52,6 +29,8 @@ import TopBar from "components/common/topbar/TopBar";
 import SwitchLR from "./childComps/SwitchLR";
 import Login from "./childComps/Login";
 import Register from "./childComps/Register";
+import ThirdPartyLogin from "./childComps/ThirdPartyLogin";
+import Agreement from "./childComps/Agreement";
 
 export default {
   name: "LorR",
@@ -60,7 +39,9 @@ export default {
 
     SwitchLR,
     Login,
-    Register
+    Register,
+    ThirdPartyLogin,
+    Agreement
   },
   data() {
     return {
@@ -89,58 +70,27 @@ export default {
 <style scoped>
 .LorR {
   position: relative;
-  /* z-index: 9; */
+  z-index: 9;
   height: 100vh;
-  background: url(~assets/img/register/login.jpg) no-repeat;
+  background: url(~assets/img/rorl/login.jpg) no-repeat;
   background-size: 375px 667px;
   color: var(--color-text);
 }
 
 .back img {
-  margin-top: 11px;
+  padding-top: 11px;
 }
 
 .main {
   position: absolute;
-  top: 70px;
+  top: 50px;
   right: 20px;
   bottom: 20px;
   left: 20px;
-  height: 500px;
-  border-radius: 20px;
+  height: 560px;
+  padding: 25px;
+  border-radius: 15px;
   color: black;
   background-color: #fff;
-  opacity: 0.75;
-}
-
-.thirdpartydivide {
-  font-size: 10px;
-  color: rgb(36, 142, 250);
-  margin: 10px 0;
-}
-
-.thirdpartydivide::before,
-.thirdpartydivide::after {
-  content: "";
-  display: inline-block;
-  width: 100px;
-  margin: 0 5px 5px 20px;
-  border-top: 1px solid rgb(36, 142, 250);
-}
-
-.thirdpartylogin {
-  display: flex;
-  margin: 0 20px;
-}
-
-.thirdpartyitem {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.agreement {
-  margin: 20px;
 }
 </style>
